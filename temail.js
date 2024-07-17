@@ -12,6 +12,7 @@ async function getEmail() {
     return data;
     // cekMail(login, email);
   } catch (error) {
+    getEmail()
     console.error(`error on getting email: ${error}`);
     // return [];
   }
@@ -23,14 +24,21 @@ async function cekMail(login, domain) {
       `https://www.1secmail.com/api/v1/?action=getMessages&login=${login}&domain=${domain}`
     );
     const data = response.data;
+    if (data.length === 0) {
+      console.error('Tidak ada pesan yang ditemukan');
+      cekMail(login, domain);
+    }
     const lastMessage = data[data.length - 1];
     const id = lastMessage.id;
     return getInbox(id, login, domain);
   } catch (error) {
-    console.error(`gada otp peler`);
-    cekMail(login, domain);
-    // return regist;
-    // console.error(`error on getting message: ${error}`);
+    if (error.response && error.response.status === 404) {
+      console.error('Tidak ada pesan yang ditemukan');
+      cekMail(login, domain);
+    } else {
+      console.error('Terjadi kesalahan:', error.message);
+      cekMail(login, domain);
+    }
   }
 }
 
@@ -45,7 +53,7 @@ async function getInbox(id, login, domain) {
 
     if (match) {
       const code = match[1];
-      console.log(code);
+      console.log('kode adalah', code);
       return code;
     } else {
       console.log('Kode tidak ditemukan');

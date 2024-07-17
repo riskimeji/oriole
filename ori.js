@@ -29,7 +29,8 @@ async function regist(){
             await delay(4000);
 
             const otp = await cekMail(login, domain);
-            await confirmOtp(email, otp);
+            console.log('....\n')
+            confirmOtp(email, otp);
         }
     } catch (error) {
         console.log('error');
